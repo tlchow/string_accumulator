@@ -1,6 +1,5 @@
 package com.ubs.careers_apac.string_accumulator;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -60,24 +59,16 @@ public class StringCalculator {
 			if(inputStr.length() == 0) {
 				return 0;
 			} else {
-				ArrayList<String> negativeNumber = new ArrayList<>();
-				int sum = 0;
-				String[] numberStr = splitNumber();
-				for(int i=0; i<numberStr.length; i++) {
-					int value = Integer.parseInt(numberStr[i]);
-					if(value < 0) {
-						negativeNumber.add(numberStr[i]);
-						logger.info("Negative number added [{}]", numberStr[i]);
-					} else if(value < MAX_NUMBER_TO_ADD) {
-						sum += value;
-					} else {
-						logger.info("Value [{}] >= [{}], it will be ignored", value, MAX_NUMBER_TO_ADD);
-					}
-				}
-				if(!negativeNumber.isEmpty()) {
-					throw new NegativeNumberException(negativeNumber.toArray(new String[0]));
+				String[] numberStrArray = splitNumber();
+				String negativeNum = Arrays.stream(numberStrArray).map(Integer::parseInt).filter(num-> num <0).map(String::valueOf)
+				        .collect(Collectors.joining(","));
+				
+				if(negativeNum.length() > 0) {
+					logger.info("Negative number detected [{}]", negativeNum);
+					throw new NegativeNumberException(negativeNum);
 				} else {
-					return sum;
+					return Arrays.stream(numberStrArray).map(Integer::parseInt).filter(num-> num <MAX_NUMBER_TO_ADD).
+							mapToInt(Integer::intValue).sum();
 				}
 			}
 		}
@@ -132,7 +123,7 @@ public class StringCalculator {
 	 * 
 	 * Allow multiple delimiters ( multiple delimiters with length longer than one character) 
 	 * like this: “//delim1|delim2\n” (with a “|” separating delimiters),
-     * --- “//*|%\n1*2%3” return 6
+	 * --- “//*|%\n1*2%3” return 6
 	 * 
 	 * @return the result of calculation
 	 * 

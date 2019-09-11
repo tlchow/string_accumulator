@@ -128,11 +128,21 @@ public class StringCalculatorTest {
 	
 	@Test(expected = NegativeNumberException.class )
 	public void testRejectSingleNegativeNubmer() throws NegativeNumberException {
-		StringCalculator.add("//***|,,,\n1***-2,,,3");
+		try {
+			StringCalculator.add("//***|,,,\n1***-2,,,3");
+		} catch (NegativeNumberException e) {
+			Assert.assertEquals("Negative number not allowed [-2]", e.getMessage());
+			throw e;
+		}
 	}
 
 	@Test(expected = NegativeNumberException.class)
 	public void testRejectMulitpleNegativeNubmer() throws NegativeNumberException {
-		StringCalculator.add("//***|,,,\n-1***-2,,,3");
+		try {
+			StringCalculator.add("//***|,,,\n-1***-2,,,3");
+		} catch (NegativeNumberException e) {
+			Assert.assertEquals("Negative number not allowed [-1,-2]", e.getMessage());
+			throw e;
+		}
 	}
 }
